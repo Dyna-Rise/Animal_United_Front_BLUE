@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2884740471621329813}
   m_Layer: 0
   m_Name: Boss
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -49,7 +49,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -67,6 +67,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6301009cbf6a45a40af7227a9e77fc7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  bossHp: 10
+  targetHeight: 0
+  bossMoveSpeed: 3
+  bossDamper: 0.5
+  bossShotPrefab: {fileID: 1595551310247498842, guid: 1eddc5f20ccbfe34283382bbab032c35, type: 3}
+  bossShotSpeed: 5
+  spreadAngle: 15
+  bossSlashPrefab: {fileID: 4234957863503650788, guid: f53c97cebac1ba249bc21e73e293cdd0, type: 3}
 --- !u!1 &7928121638000556970
 GameObject:
   m_ObjectHideFlags: 0
