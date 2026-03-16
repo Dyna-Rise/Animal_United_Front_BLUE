@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class BossController : MonoBehaviour
 {
-
-    public float bossHp = 20f;     // ボスの体力
+    public float bossMaxHp = 20f;   // ボスの最大体力
+    float bossHp = 20f;      // ボスの現在体力
     bool inDamage = false;      // ダメージ管理フラグ
     public GameObject bossVisual;      // 子オブジェクト（絵の部分）
 
-    //GameObject explosionPrefab;   // 爆発エフェクトのプレハブ
+    public GameObject explosionPrefab;   // 爆発エフェクトのプレハブ
     private bool isDead = false;    // 死亡フラグ
 
     // 移動関連
@@ -18,7 +18,7 @@ public class BossController : MonoBehaviour
     bool moveOn;        // 移動フラグ
     Vector3 targetPosition;     // 目的地
     bool isOffScreen;       // 画面外フラグ
-    public float landHeight = 2.5f;       // 降りてきた時の高さ
+    public float landHeight = 2.5f;     // 降りてきた時の高さ
     public float targetHeight;      // 上下移動の距離
     public float bossMoveSpeed = 3.0f;  // 移動スピード
     public float bossDamper = 0.9f;     // 移動力の減衰（摩擦力）
@@ -44,6 +44,8 @@ public class BossController : MonoBehaviour
     {
         // playerを取得しておく
         player = GameObject.FindGameObjectWithTag("Player");
+        // 体力を最大体力と同じに
+        bossHp = bossMaxHp;
         // 指定した初期位置に移動
         transform.position = initialPosition;
         // 画面外フラグをオンに
@@ -105,6 +107,15 @@ public class BossController : MonoBehaviour
         }
     }
 
+
+    // ダメージ点滅の終了
+    void DamageEnd()
+    {
+        inDamage = false;
+        bossVisual.SetActive(true);     // 最後は必ず表示する
+    }
+
+
     // 急襲コルーチン
     IEnumerator Assault()
     {
@@ -118,11 +129,26 @@ public class BossController : MonoBehaviour
             // 移動の待ち時間
             yield return new WaitForSeconds(2.0f);
 
-            // 攻撃関連（近ければ近接、遠ければショット）
-            float distance = Vector3.Distance(transform.position, player.transform.position);
+            // 体力が半分以下なら3回連続攻撃
+            int attackCount = 1;
+            if (bossHp <= bossMaxHp / 2) { attackCount = 3; }
 
-            if (distance < detectionRange) { BossSlash(); }
-            else { BossShot(); }
+            // attackCount分攻撃する
+            for (int i = 0; i < attackCount; i++)
+            {
+
+                // 攻撃関連（近ければ近接、遠ければショット）
+                float distance = Vector3.Distance(transform.position, player.transform.position);
+
+                if (distance < detectionRange) { BossSlash(); }
+                else { BossShot(); }
+
+                // // 連撃の場合、次の攻撃までに少しだけ間を置く
+                if (attackCount > 1)
+                {
+                    yield return new WaitForSeconds(0.3f);
+                }
+            }
 
             // 攻撃後の隙
             yield return new WaitForSeconds(waitTime);
@@ -235,22 +261,22 @@ public class BossController : MonoBehaviour
             if (bossHp <= 0 && !isDead)
             {
                 isDead = true;      // 二度と呼ばれないようにする
+
+                // 個別にコルーチンを止める
+                if (assaultCol != null) StopCoroutine(assaultCol);
+                if (repositionCol != null) StopCoroutine(repositionCol);
+
                 StartCoroutine(DeathRoutine());     // 演出の開始
+
             }
         }
     }
 
-    void DamageEnd()
-    {
-        inDamage = false;
-        bossVisual.SetActive(true);     // 最後は必ず表示する
-    }
+
 
     IEnumerator DeathRoutine()
     {
-        // 移動や攻撃のコルーチンを止める
-        // StopAllCoroutines() は、そのメソッドを呼び出したスクリプト（インスタンス）から開始されたコルーチンだけを停止させる
-        StopAllCoroutines(); 
+        // 移動を止める
         moveOn = false;
 
         // その場でガタガタ震える演出
@@ -264,10 +290,10 @@ public class BossController : MonoBehaviour
         transform.position = pos;
 
         // 爆発エフェクトの生成
-        //if (explosionPrefab != null)
-        //{
-        //    Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-        //}
+        if (explosionPrefab != null)
+        {
+            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        }
 
         // ボスの見た目を消す
         if (bossVisual != null) { bossVisual.SetActive(false); }
@@ -275,7 +301,5 @@ public class BossController : MonoBehaviour
         // 少し待ち時間を入れてから、オブジェクトを完全に削除
         yield return new WaitForSeconds(1.0f);
         Destroy(gameObject);
-
-        Debug.Log("ボスを撃破！");
     }
 }
