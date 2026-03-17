@@ -29,7 +29,7 @@ public class Enemy3Controller : MonoBehaviour
     void Start()
     {
         rbody = GetComponent<Rigidbody>(); //Rigidbodyを取得
-        player = GameObject.FindGameObjectWithTag("Player"); //プレイヤー情報を取得
+        player = GameObject.FindGameObjectWithTag("PlayerFollower"); //プレイヤー情報を取得
 
         rbody.linearVelocity = Vector3.left * speed;
 

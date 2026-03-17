@@ -38,7 +38,7 @@ public class Enemy4Controller : MonoBehaviour
 
         StartCoroutine(ModeChange()); //モード切替コルーチンを発動させる
 
-        player = GameObject.FindGameObjectWithTag("Player");　//プレイヤー情報を取得
+        player = GameObject.FindGameObjectWithTag("PlayerFollower");　//プレイヤー情報を取得
     }
 
     void Update()

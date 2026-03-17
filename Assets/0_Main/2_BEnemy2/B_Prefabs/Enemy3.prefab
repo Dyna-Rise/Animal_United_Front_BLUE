@@ -76,6 +76,7 @@ MonoBehaviour:
   toDestroyTime: 10
   life: 10
   attackPower: 1
+  rend: {fileID: 8731197205688620583}
 --- !u!54 &3009990508908053614
 Rigidbody:
   m_ObjectHideFlags: 0

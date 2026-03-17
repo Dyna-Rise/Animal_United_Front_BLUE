@@ -43,7 +43,7 @@ public class BossController : MonoBehaviour
     void Start()
     {
         // playerを取得しておく
-        player = GameObject.FindGameObjectWithTag("Player");
+        player = GameObject.FindGameObjectWithTag("PlayerFollower");
         // 体力を最大体力と同じに
         bossHp = bossMaxHp;
         // 指定した初期位置に移動
