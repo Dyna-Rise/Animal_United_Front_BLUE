@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BossShot : MonoBehaviour
 {
-    public float deleteTime = 5.0f;
+    public float deleteTime = 4.0f;
 
     void Start()
     {
